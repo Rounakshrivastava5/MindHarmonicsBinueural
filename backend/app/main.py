@@ -21,7 +21,7 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# CORS Middleware setup
+# CORS Middleware setup for tunnels & cross-origin requests
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -36,6 +36,7 @@ app.include_router(api_router, prefix=settings.API_V1_STR)
 @app.get("/")
 async def root():
     return {
+        "message": "API is live and accessible!",
         "app": settings.PROJECT_NAME,
         "version": settings.VERSION,
         "docs": f"{settings.API_V1_STR}/docs",
