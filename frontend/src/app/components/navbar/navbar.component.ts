@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { AudioPlayerService } from '../../services/audio-player.service';
 import { LanguageService } from '../../services/language.service';
 import { ThemeService } from '../../services/theme.service';
@@ -39,17 +39,17 @@ import { AuthService } from '../../services/auth.service';
             <span>{{ langService.isHindi() ? 'श्रेणियाँ' : 'Explore' }}</span>
           </a>
 
-          <a routerLink="/generator" routerLinkActive="active" class="nav-item">
+          <a (click)="onNavClick('/generator', $event)" [class.active]="router.url === '/generator'" class="nav-item">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
             <span>{{ langService.isHindi() ? 'स्टूडियो' : 'Studio' }}</span>
           </a>
 
-          <a routerLink="/library" routerLinkActive="active" class="nav-item">
+          <a (click)="onNavClick('/library', $event)" [class.active]="router.url === '/library'" class="nav-item">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m16 6 4 14"/><path d="M12 6v14"/><path d="M8 8v12"/><path d="M4 4v16"/></svg>
             <span>{{ langService.isHindi() ? 'लाइब्रेरी' : 'Library' }}</span>
           </a>
 
-          <a routerLink="/suggestions" routerLinkActive="active" class="nav-item">
+          <a (click)="onNavClick('/suggestions', $event)" [class.active]="router.url === '/suggestions'" class="nav-item">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
             <span>{{ langService.isHindi() ? 'सुझाव' : 'Books' }}</span>
           </a>
@@ -168,6 +168,7 @@ import { AuthService } from '../../services/auth.service';
       color: var(--text-muted);
       text-decoration: none;
       white-space: nowrap;
+      cursor: pointer;
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .nav-item:hover {
@@ -271,6 +272,14 @@ export class NavbarComponent {
   langService = inject(LanguageService);
   themeService = inject(ThemeService);
   authService = inject(AuthService);
+  router = inject(Router);
+
+  onNavClick(path: string, event: Event) {
+    event.preventDefault();
+    if (this.authService.requireAuth()) {
+      this.router.navigate([path]);
+    }
+  }
 
   getUserDisplayName(): string {
     const user = this.authService.currentUser();

@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { AudioPlayerService } from '../../services/audio-player.service';
 import { LanguageService } from '../../services/language.service';
+import { AuthService } from '../../services/auth.service';
 import { Genre } from '../../models/genre.model';
 import { BinauralPreset } from '../../models/binaural-preset.model';
 import { Voice } from '../../models/voice.model';
@@ -507,6 +508,7 @@ export class TrackGeneratorComponent implements OnInit {
   private apiService = inject(ApiService);
   private audioPlayer = inject(AudioPlayerService);
   langService = inject(LanguageService);
+  authService = inject(AuthService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
@@ -641,6 +643,10 @@ export class TrackGeneratorComponent implements OnInit {
   }
 
   generateTrack() {
+    if (!this.authService.requireAuth()) {
+      return;
+    }
+
     const filteredAffirmations = this.affirmations().map(a => a.trim()).filter(a => a.length > 0);
     if (filteredAffirmations.length === 0) {
       this.errorMessage.set(this.langService.isHindi() ? 'कृपया कम से कम एक सकारात्मक संदेश दर्ज करें।' : 'Please enter at least one affirmation statement.');

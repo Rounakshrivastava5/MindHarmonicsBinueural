@@ -8,7 +8,16 @@ import { User, UserSignUp, UserLogin, AuthTokenResponse } from '../models/user.m
 })
 export class AuthService {
   private http = inject(HttpClient);
-  private baseUrl = 'http://127.0.0.1:8000/api/v1/auth';
+  
+  private getApiBaseUrl(): string {
+    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    if (isLocalhost) {
+      return 'http://127.0.0.1:8000/api/v1/auth';
+    }
+    return 'https://mindharmonics-backend.onrender.com/api/v1/auth';
+  }
+
+  private baseUrl = this.getApiBaseUrl();
 
   readonly currentUser = signal<User | null>(null);
   readonly token = signal<string | null>(null);
@@ -31,6 +40,19 @@ export class AuthService {
         this.clearSession();
       }
     }
+  }
+
+  /**
+   * Helper to check authentication before executing features.
+   * If logged in -> returns true.
+   * If logged out -> opens AuthModal popup immediately and returns false.
+   */
+  requireAuth(): boolean {
+    if (this.isLoggedIn()) {
+      return true;
+    }
+    this.openAuthModal();
+    return false;
   }
 
   signup(payload: UserSignUp): Observable<AuthTokenResponse> {

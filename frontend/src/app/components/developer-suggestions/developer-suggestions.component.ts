@@ -1,6 +1,7 @@
 import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LanguageService } from '../../services/language.service';
+import { AuthService } from '../../services/auth.service';
 import { SUGGESTED_BOOKS } from '../../data/books.data';
 import { BOOK_EXCERPTS, BookExcerpt } from '../../data/book-excerpts.data';
 import { SuggestedBook } from '../../models/book.model';
@@ -71,11 +72,11 @@ import { SuggestedBook } from '../../models/book.model';
             <!-- Action Buttons -->
             <div class="card-actions">
               <button class="btn btn-primary read-btn" (click)="openNativeReader(book)">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 1 4 4v14a3 3 0 0 1 3-3h7z"/></svg>
                 <span>{{ langService.isHindi() ? 'मुफ़्त सैंपल' : 'Free Sample' }}</span>
               </button>
 
-              <a [href]="book.amazon_url" target="_blank" rel="noopener noreferrer" class="btn btn-accent buy-btn">
+              <a (click)="onBuyClick(book.amazon_url, $event)" class="btn btn-accent buy-btn">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
                 <span>{{ langService.isHindi() ? 'अमेज़न से खरीदें' : 'Buy on Amazon' }}</span>
               </a>
@@ -103,7 +104,7 @@ import { SuggestedBook } from '../../models/book.model';
               </div>
 
               <div class="reader-header-actions">
-                <a [href]="activeBook()?.amazon_url" target="_blank" rel="noopener noreferrer" class="btn btn-accent btn-sm">
+                <a (click)="onBuyClick(activeBook()?.amazon_url, $event)" class="btn btn-accent btn-sm">
                   🛒 {{ langService.isHindi() ? 'अमेज़न से खरीदें' : 'Buy on Amazon' }}
                 </a>
                 <button class="close-reader-btn" (click)="closeReader()" title="Close Reader">✕</button>
@@ -179,7 +180,7 @@ import { SuggestedBook } from '../../models/book.model';
                 </button>
               </div>
 
-              <a [href]="activeBook()?.amazon_url" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">
+              <a (click)="onBuyClick(activeBook()?.amazon_url, $event)" class="btn btn-primary btn-sm">
                 🛒 Buy Full Book
               </a>
             </div>
@@ -321,6 +322,7 @@ import { SuggestedBook } from '../../models/book.model';
     .buy-btn {
       font-size: 0.88rem;
       white-space: nowrap;
+      cursor: pointer;
     }
 
     /* In-App Reader Modal */
@@ -489,6 +491,7 @@ import { SuggestedBook } from '../../models/book.model';
 })
 export class DeveloperSuggestionsComponent {
   langService = inject(LanguageService);
+  authService = inject(AuthService);
 
   books: SuggestedBook[] = SUGGESTED_BOOKS;
   activeBook = signal<SuggestedBook | null>(null);
@@ -514,8 +517,17 @@ export class DeveloperSuggestionsComponent {
   });
 
   openNativeReader(book: SuggestedBook) {
-    this.activeBook.set(book);
-    this.currentPageIndex.set(0);
+    if (this.authService.requireAuth()) {
+      this.activeBook.set(book);
+      this.currentPageIndex.set(0);
+    }
+  }
+
+  onBuyClick(url: string | undefined, event: Event) {
+    event.preventDefault();
+    if (this.authService.requireAuth() && url) {
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
   }
 
   closeReader() {
