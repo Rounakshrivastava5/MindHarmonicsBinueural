@@ -3,8 +3,8 @@
 **MindHarmonics** is a full-stack web application designed to help users create, customize, generate, and stream personal audio tracks combining text-to-speech affirmations with background binaural beat carrier waves across health, wealth, focus, height growth, self-love, and deep sleep genres.
 
 Explore the live app and share your feedback 
-Vercel - https://mind-harmonics-binueural.vercel.app/
-Cloud Flare - https://plasma-newport-base-reid.trycloudflare.com
+Vercel - https://mind-harmonics-binueural.vercel.app/ (Currently Down)
+Cloud Flare - https://albany-questions-fragrances-founder.trycloudflare.com/
 
 ---
 
