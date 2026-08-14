@@ -14,17 +14,25 @@ import { AuthService } from '../../services/auth.service';
     <header class="navbar-header glass-panel">
       <div class="container navbar-container">
         
-        <!-- Brand Logo -->
-        <a routerLink="/" class="brand-link" title="MindHarmonics Studio">
-          <div class="brand-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M2 10v3"/><path d="M6 6v11"/><path d="M10 3v18"/><path d="M14 8v7"/><path d="M18 5v13"/><path d="M22 10v3"/>
-            </svg>
+        <!-- Left: macOS Window Traffic Light Controls & Brand -->
+        <div class="brand-group">
+          <div class="mac-window-controls">
+            <span class="mac-dot mac-dot-red"></span>
+            <span class="mac-dot mac-dot-yellow"></span>
+            <span class="mac-dot mac-dot-green"></span>
           </div>
-          <span class="brand-name">Mind<span class="text-gradient">Harmonics</span></span>
-        </a>
 
-        <!-- Navigation Tabs -->
+          <a routerLink="/" class="brand-link" title="MindHarmonics Studio">
+            <div class="brand-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 10v3"/><path d="M6 6v11"/><path d="M10 3v18"/><path d="M14 8v7"/><path d="M18 5v13"/><path d="M22 10v3"/>
+              </svg>
+            </div>
+            <span class="brand-name">Mind<span class="text-gradient">Harmonics</span></span>
+          </a>
+        </div>
+
+        <!-- Center: Liquid Glass Nav Pills -->
         <nav class="nav-links">
           <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-item">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
@@ -47,7 +55,7 @@ import { AuthService } from '../../services/auth.service';
           </a>
         </nav>
 
-        <!-- Right Side Quick Controls & Auth -->
+        <!-- Right Side: macOS Controls & Auth -->
         <div class="right-controls">
           
           <!-- Theme Toggle -->
@@ -86,13 +94,11 @@ import { AuthService } from '../../services/auth.service';
       position: sticky;
       top: 0;
       z-index: 100;
-      border-radius: 0 0 16px 16px;
+      border-radius: 0 0 20px 20px;
       border-top: none;
-      border-left: none;
-      border-right: none;
       background: var(--bg-card);
-      backdrop-filter: blur(20px);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(28px) saturate(190%);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     }
     .navbar-container {
       display: flex;
@@ -102,7 +108,11 @@ import { AuthService } from '../../services/auth.service';
       padding: 0 24px;
     }
 
-    /* Brand Logo */
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
     .brand-link {
       display: flex;
       align-items: center;
@@ -119,7 +129,7 @@ import { AuthService } from '../../services/auth.service';
       align-items: center;
       justify-content: center;
       color: #ffffff;
-      box-shadow: 0 0 14px rgba(99, 102, 241, 0.35);
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.4), 0 0 16px rgba(99, 102, 241, 0.4);
     }
     .brand-name {
       font-family: var(--font-heading);
@@ -135,15 +145,17 @@ import { AuthService } from '../../services/auth.service';
       -webkit-text-fill-color: transparent;
     }
 
-    /* Central Nav Tabs */
+    /* macOS Central Liquid Glass Nav Pills */
     .nav-links {
       display: flex;
       align-items: center;
       gap: 4px;
-      background: rgba(100, 116, 139, 0.08);
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(16px);
       padding: 4px;
       border-radius: var(--radius-full);
       border: 1px solid var(--border-subtle);
+      border-top-color: var(--border-specular);
     }
     .nav-item {
       display: flex;
@@ -156,19 +168,20 @@ import { AuthService } from '../../services/auth.service';
       color: var(--text-muted);
       text-decoration: none;
       white-space: nowrap;
-      transition: all 0.2s ease;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .nav-item:hover {
       color: var(--text-main);
-      background: rgba(100, 116, 139, 0.12);
+      background: rgba(255, 255, 255, 0.12);
     }
     .nav-item.active {
       color: #ffffff;
-      background: linear-gradient(135deg, #6366f1, #06b6d4);
-      box-shadow: 0 2px 10px rgba(99, 102, 241, 0.3);
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.85), rgba(6, 182, 212, 0.85));
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);
     }
 
-    /* Right Side Controls */
+    /* Right Controls */
     .right-controls {
       display: flex;
       align-items: center;
@@ -178,33 +191,35 @@ import { AuthService } from '../../services/auth.service';
       width: 34px;
       height: 34px;
       border-radius: 50%;
-      background: rgba(100, 116, 139, 0.1);
+      background: rgba(255, 255, 255, 0.08);
       border: 1px solid var(--border-subtle);
+      border-top-color: var(--border-specular);
       color: var(--text-main);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 0.95rem;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.25s ease;
     }
     .icon-btn:hover {
-      background: rgba(100, 116, 139, 0.2);
-      transform: scale(1.05);
+      background: rgba(255, 255, 255, 0.18);
+      transform: scale(1.06);
     }
     .lang-btn {
-      background: rgba(100, 116, 139, 0.1);
+      background: rgba(255, 255, 255, 0.08);
       border: 1px solid var(--border-subtle);
+      border-top-color: var(--border-specular);
       color: var(--text-main);
       padding: 6px 12px;
       border-radius: var(--radius-full);
       font-size: 0.8rem;
       font-weight: 700;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.25s ease;
     }
     .lang-btn:hover {
-      background: rgba(100, 116, 139, 0.2);
+      background: rgba(255, 255, 255, 0.18);
       border-color: var(--primary);
     }
 
@@ -213,17 +228,16 @@ import { AuthService } from '../../services/auth.service';
       display: flex;
       align-items: center;
       gap: 8px;
-      background: rgba(99, 102, 241, 0.12);
-      border: 1px solid rgba(99, 102, 241, 0.25);
+      background: rgba(99, 102, 241, 0.15);
+      border: 1px solid rgba(99, 102, 241, 0.3);
       padding: 4px 10px;
       border-radius: var(--radius-full);
       font-size: 0.82rem;
       font-weight: 600;
       color: var(--text-main);
+      backdrop-filter: blur(10px);
     }
-    .user-avatar {
-      font-size: 0.85rem;
-    }
+    .user-avatar { font-size: 0.85rem; }
     .user-name {
       max-width: 100px;
       white-space: nowrap;
@@ -241,26 +255,14 @@ import { AuthService } from '../../services/auth.service';
       border-radius: 4px;
       transition: color 0.2s ease;
     }
-    .logout-icon-btn:hover {
-      color: #f43f5e;
-    }
-
-    .login-btn {
-      padding: 6px 14px;
-      font-size: 0.82rem;
-      border-radius: var(--radius-full);
-    }
+    .logout-icon-btn:hover { color: #f43f5e; }
+    .login-btn { padding: 6px 14px; font-size: 0.82rem; border-radius: var(--radius-full); }
 
     @media (max-width: 860px) {
-      .navbar-container {
-        padding: 0 16px;
-      }
-      .nav-item span {
-        display: none;
-      }
-      .user-name {
-        display: none;
-      }
+      .navbar-container { padding: 0 16px; }
+      .nav-item span { display: none; }
+      .user-name { display: none; }
+      .mac-window-controls { display: none; }
     }
   `]
 })
