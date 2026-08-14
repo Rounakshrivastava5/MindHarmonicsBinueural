@@ -1,39 +1,26 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Genre } from '../models/genre.model';
 import { BinauralPreset } from '../models/binaural-preset.model';
 import { Voice } from '../models/voice.model';
 import { Track, TrackCreate, TrackListResponse } from '../models/track.model';
-import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
   private http = inject(HttpClient);
-  private authService = inject(AuthService);
   
-  // Auto-detect environment: Use localhost in dev, or Render live URL in production
-  private baseUrl = this.getApiBaseUrl();
-
   private getApiBaseUrl(): string {
     const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     if (isLocalhost) {
       return 'http://127.0.0.1:8000/api/v1';
     }
-    // Update this string with your live Render backend URL after creating the service on Render!
     return 'https://mindharmonics-backend.onrender.com/api/v1';
   }
 
-  private getHeaders(): HttpHeaders {
-    let headers = new HttpHeaders();
-    const authHeaders = this.authService.getAuthHeaders();
-    if (authHeaders['Authorization']) {
-      headers = headers.set('Authorization', authHeaders['Authorization']);
-    }
-    return headers;
-  }
+  private baseUrl = this.getApiBaseUrl();
 
   getGenres(): Observable<Genre[]> {
     return this.http.get<Genre[]>(`${this.baseUrl}/genres`);
@@ -48,7 +35,7 @@ export class ApiService {
   }
 
   generateTrack(payload: TrackCreate): Observable<Track> {
-    return this.http.post<Track>(`${this.baseUrl}/tracks/generate`, payload, { headers: this.getHeaders() });
+    return this.http.post<Track>(`${this.baseUrl}/tracks/generate`, payload);
   }
 
   getTracks(genreId?: number, favoriteOnly: boolean = false): Observable<TrackListResponse> {
@@ -59,7 +46,7 @@ export class ApiService {
     if (favoriteOnly) {
       params = params.set('favorite_only', 'true');
     }
-    return this.http.get<TrackListResponse>(`${this.baseUrl}/tracks`, { params, headers: this.getHeaders() });
+    return this.http.get<TrackListResponse>(`${this.baseUrl}/tracks`, { params });
   }
 
   getTrackStreamUrl(trackId: string): string {
@@ -67,10 +54,10 @@ export class ApiService {
   }
 
   toggleFavorite(trackId: string): Observable<Track> {
-    return this.http.post<Track>(`${this.baseUrl}/tracks/${trackId}/favorite`, {}, { headers: this.getHeaders() });
+    return this.http.post<Track>(`${this.baseUrl}/tracks/${trackId}/favorite`, {});
   }
 
   deleteTrack(trackId: string): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/tracks/${trackId}`, { headers: this.getHeaders() });
+    return this.http.delete<void>(`${this.baseUrl}/tracks/${trackId}`);
   }
 }

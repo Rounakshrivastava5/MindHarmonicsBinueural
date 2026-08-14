@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { LanguageService } from '../../services/language.service';
-import { AuthService } from '../../services/auth.service';
 import { Genre } from '../../models/genre.model';
 import { BinauralPreset } from '../../models/binaural-preset.model';
 
@@ -346,7 +345,6 @@ import { BinauralPreset } from '../../models/binaural-preset.model';
 export class GenreGridComponent implements OnInit {
   private apiService = inject(ApiService);
   langService = inject(LanguageService);
-  authService = inject(AuthService);
   private router = inject(Router);
 
   genres = signal<Genre[]>([]);
@@ -377,15 +375,11 @@ export class GenreGridComponent implements OnInit {
   }
 
   selectGenre(genre: Genre) {
-    if (this.authService.requireAuth()) {
-      this.router.navigate(['/generator'], { queryParams: { genre_id: genre.id } });
-    }
+    this.router.navigate(['/generator'], { queryParams: { genre_id: genre.id } });
   }
 
   goToGenerator() {
-    if (this.authService.requireAuth()) {
-      this.router.navigate(['/generator']);
-    }
+    this.router.navigate(['/generator']);
   }
 
   scrollToGenres() {

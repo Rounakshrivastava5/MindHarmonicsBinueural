@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { AudioPlayerService } from '../../services/audio-player.service';
-import { AuthService } from '../../services/auth.service';
 import { Track } from '../../models/track.model';
 import { Genre } from '../../models/genre.model';
 
@@ -387,7 +386,6 @@ import { Genre } from '../../models/genre.model';
 export class TrackLibraryComponent implements OnInit {
   private apiService = inject(ApiService);
   audioPlayer = inject(AudioPlayerService);
-  authService = inject(AuthService);
   private router = inject(Router);
 
   tracks = signal<Track[]>([]);
@@ -441,58 +439,46 @@ export class TrackLibraryComponent implements OnInit {
   }
 
   setFilter(genreId: number | null, favOnly: boolean) {
-    if (this.authService.requireAuth()) {
-      this.selectedGenreFilter.set(genreId);
-      this.favoritesOnly.set(favOnly);
-      this.loadTracks();
-    }
+    this.selectedGenreFilter.set(genreId);
+    this.favoritesOnly.set(favOnly);
+    this.loadTracks();
   }
 
   playTrack(track: Track) {
-    if (this.authService.requireAuth()) {
-      this.audioPlayer.playTrack(track);
-    }
+    this.audioPlayer.playTrack(track);
   }
 
   toggleFavorite(track: Track, event: MouseEvent) {
     event.stopPropagation();
-    if (this.authService.requireAuth()) {
-      this.apiService.toggleFavorite(track.id).subscribe({
-        next: (updated) => {
-          this.tracks.update(list => list.map(t => t.id === updated.id ? updated : t));
+    this.apiService.toggleFavorite(track.id).subscribe({
+      next: (updated) => {
+        this.tracks.update(list => list.map(t => t.id === updated.id ? updated : t));
+      }
+    });
+  }
+
+  downloadTrack(track: Track) {
+    const url = this.apiService.getTrackStreamUrl(track.id);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${track.title.replace(/\s+/g, '_')}.wav`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+
+  deleteTrack(track: Track) {
+    if (confirm(`Are you sure you want to delete track "${track.title}"?`)) {
+      this.apiService.deleteTrack(track.id).subscribe({
+        next: () => {
+          this.tracks.update(list => list.filter(t => t.id !== track.id));
         }
       });
     }
   }
 
-  downloadTrack(track: Track) {
-    if (this.authService.requireAuth()) {
-      const url = this.apiService.getTrackStreamUrl(track.id);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${track.title.replace(/\s+/g, '_')}.wav`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    }
-  }
-
-  deleteTrack(track: Track) {
-    if (this.authService.requireAuth()) {
-      if (confirm(`Are you sure you want to delete track "${track.title}"?`)) {
-        this.apiService.deleteTrack(track.id).subscribe({
-          next: () => {
-            this.tracks.update(list => list.filter(t => t.id !== track.id));
-          }
-        });
-      }
-    }
-  }
-
   goToGenerator() {
-    if (this.authService.requireAuth()) {
-      this.router.navigate(['/generator']);
-    }
+    this.router.navigate(['/generator']);
   }
 
   formatDuration(secs: number): string {

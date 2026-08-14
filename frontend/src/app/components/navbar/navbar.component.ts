@@ -1,10 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive, Router } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AudioPlayerService } from '../../services/audio-player.service';
 import { LanguageService } from '../../services/language.service';
 import { ThemeService } from '../../services/theme.service';
-import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-navbar',
@@ -39,23 +38,23 @@ import { AuthService } from '../../services/auth.service';
             <span>{{ langService.isHindi() ? 'श्रेणियाँ' : 'Explore' }}</span>
           </a>
 
-          <a (click)="onNavClick('/generator', $event)" [class.active]="router.url === '/generator'" class="nav-item">
+          <a routerLink="/generator" routerLinkActive="active" class="nav-item">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
             <span>{{ langService.isHindi() ? 'स्टूडियो' : 'Studio' }}</span>
           </a>
 
-          <a (click)="onNavClick('/library', $event)" [class.active]="router.url === '/library'" class="nav-item">
+          <a routerLink="/library" routerLinkActive="active" class="nav-item">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m16 6 4 14"/><path d="M12 6v14"/><path d="M8 8v12"/><path d="M4 4v16"/></svg>
             <span>{{ langService.isHindi() ? 'लाइब्रेरी' : 'Library' }}</span>
           </a>
 
-          <a (click)="onNavClick('/suggestions', $event)" [class.active]="router.url === '/suggestions'" class="nav-item">
+          <a routerLink="/suggestions" routerLinkActive="active" class="nav-item">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
             <span>{{ langService.isHindi() ? 'सुझाव' : 'Books' }}</span>
           </a>
         </nav>
 
-        <!-- Right Side: macOS Controls & Auth -->
+        <!-- Right Side: macOS Controls -->
         <div class="right-controls">
           
           <!-- Theme Toggle -->
@@ -67,22 +66,6 @@ import { AuthService } from '../../services/auth.service';
           <button class="lang-btn" (click)="langService.toggleLanguage()" [title]="langService.isHindi() ? 'Switch to English' : 'हिंदी में बदलें'">
             <span>{{ langService.currentLang() === 'en' ? '🇬🇧 EN' : '🇮🇳 HI' }}</span>
           </button>
-
-          <!-- Auth Account Bar -->
-          @if (authService.isLoggedIn(); as loggedIn) {
-            <div class="user-chip" [title]="authService.currentUser()?.email">
-              <span class="user-avatar">👤</span>
-              <span class="user-name">{{ getUserDisplayName() }}</span>
-              <button class="logout-icon-btn" (click)="authService.logout()" title="Logout">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-              </button>
-            </div>
-          } @else {
-            <button class="btn btn-primary btn-sm login-btn" (click)="authService.openAuthModal()">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-              <span>{{ langService.isHindi() ? 'साइन इन' : 'Sign In' }}</span>
-            </button>
-          }
 
         </div>
 
@@ -224,45 +207,9 @@ import { AuthService } from '../../services/auth.service';
       border-color: var(--primary);
     }
 
-    /* User Account Chip */
-    .user-chip {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(99, 102, 241, 0.15);
-      border: 1px solid rgba(99, 102, 241, 0.3);
-      padding: 4px 10px;
-      border-radius: var(--radius-full);
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--text-main);
-      backdrop-filter: blur(10px);
-    }
-    .user-avatar { font-size: 0.85rem; }
-    .user-name {
-      max-width: 100px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .logout-icon-btn {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      padding: 2px;
-      border-radius: 4px;
-      transition: color 0.2s ease;
-    }
-    .logout-icon-btn:hover { color: #f43f5e; }
-    .login-btn { padding: 6px 14px; font-size: 0.82rem; border-radius: var(--radius-full); }
-
     @media (max-width: 860px) {
       .navbar-container { padding: 0 16px; }
       .nav-item span { display: none; }
-      .user-name { display: none; }
       .mac-window-controls { display: none; }
     }
   `]
@@ -271,22 +218,4 @@ export class NavbarComponent {
   audioPlayer = inject(AudioPlayerService);
   langService = inject(LanguageService);
   themeService = inject(ThemeService);
-  authService = inject(AuthService);
-  router = inject(Router);
-
-  onNavClick(path: string, event: Event) {
-    event.preventDefault();
-    if (this.authService.requireAuth()) {
-      this.router.navigate([path]);
-    }
-  }
-
-  getUserDisplayName(): string {
-    const user = this.authService.currentUser();
-    if (!user) return '';
-    if (user.full_name) {
-      return user.full_name.split(' ')[0];
-    }
-    return user.email.split('@')[0];
-  }
 }
