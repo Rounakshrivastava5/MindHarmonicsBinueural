@@ -13,7 +13,18 @@ import { AuthService } from './auth.service';
 export class ApiService {
   private http = inject(HttpClient);
   private authService = inject(AuthService);
-  private baseUrl = 'http://127.0.0.1:8000/api/v1';
+  
+  // Auto-detect environment: Use localhost in dev, or Render live URL in production
+  private baseUrl = this.getApiBaseUrl();
+
+  private getApiBaseUrl(): string {
+    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    if (isLocalhost) {
+      return 'http://127.0.0.1:8000/api/v1';
+    }
+    // Update this string with your live Render backend URL after creating the service on Render!
+    return 'https://mindharmonics-backend.onrender.com/api/v1';
+  }
 
   private getHeaders(): HttpHeaders {
     let headers = new HttpHeaders();
