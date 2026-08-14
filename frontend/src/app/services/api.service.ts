@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 import { Genre } from '../models/genre.model';
 import { BinauralPreset } from '../models/binaural-preset.model';
 import { Voice } from '../models/voice.model';
@@ -12,15 +13,8 @@ import { Track, TrackCreate, TrackListResponse } from '../models/track.model';
 export class ApiService {
   private http = inject(HttpClient);
   
-  private getApiBaseUrl(): string {
-    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    if (isLocalhost) {
-      return 'http://127.0.0.1:8000/api/v1';
-    }
-    return 'https://mindharmonics-backend.onrender.com/api/v1';
-  }
-
-  private baseUrl = this.getApiBaseUrl();
+  // Public Cloudflare Tunnel Backend URL
+  private baseUrl = environment.apiUrl || 'https://statistics-hampton-eco-correctly.trycloudflare.com/api/v1';
 
   getGenres(): Observable<Genre[]> {
     return this.http.get<Genre[]>(`${this.baseUrl}/genres`);
