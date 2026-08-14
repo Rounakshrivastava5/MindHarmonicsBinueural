@@ -17,21 +17,24 @@ VOICE_PRESETS = [
 ]
 
 async def generate_speech_for_text(text: str, voice_id: str = "en-US-AvaNeural") -> bytes:
-    """Generates audio bytes for a single text statement using edge-tts."""
+    """Generates audio bytes for a single text statement using edge-tts with 8s timeout and fallback."""
     try:
-        communicate = edge_tts.Communicate(text, voice_id, rate="-5%", pitch="-2Hz")
-        audio_stream = io.BytesIO()
-        async for chunk in communicate.stream():
-            if chunk["type"] == "audio":
-                audio_stream.write(chunk["data"])
-        return audio_stream.getvalue()
+        async def _fetch():
+            communicate = edge_tts.Communicate(text, voice_id, rate="-5%", pitch="-2Hz")
+            audio_stream = io.BytesIO()
+            async for chunk in communicate.stream():
+                if chunk["type"] == "audio":
+                    audio_stream.write(chunk["data"])
+            return audio_stream.getvalue()
+
+        return await asyncio.wait_for(_fetch(), timeout=8.0)
     except Exception as e:
-        print(f"Edge-TTS synthesis error for voice {voice_id}: {e}. Using fallback audio generator.")
+        print(f"Edge-TTS synthesis error/timeout for voice {voice_id}: {e}. Using fallback audio generator.")
         return _generate_fallback_chime(text)
 
 def _generate_fallback_chime(text: str, sample_rate: int = 44100) -> bytes:
-    """Generates a pleasant ambient chime sound if TTS engine is offline."""
-    duration = max(3.0, len(text) * 0.1)
+    """Generates a pleasant ambient chime sound if TTS engine is offline or times out."""
+    duration = min(6.0, max(2.5, len(text) * 0.08))
     t = np.linspace(0, duration, int(sample_rate * duration), endpoint=False)
     chime = 0.3 * (np.sin(2 * np.pi * 440 * t) + np.sin(2 * np.pi * 554.37 * t) + np.sin(2 * np.pi * 659.25 * t))
     envelope = np.exp(-1.5 * t)
