@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1" />
+      <stop offset="100%" stop-color="#06b6d4" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Rounded Gradient Icon Container -->
+  <rect x="4" y="4" width="56" height="56" rx="16" fill="url(#bgGrad)" />
+
+  <!-- Inner Specular Light Border -->
+  <rect x="5" y="5" width="54" height="54" rx="15" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-opacity="0.35" />
+
+  <!-- Equalizer Binaural Audio Waves -->
+  <g fill="#ffffff" filter="url(#glow)">
+    <rect x="14" y="26" width="4" height="12" rx="2" opacity="0.85"/>
+    <rect x="22" y="18" width="4" height="28" rx="2"/>
+    <rect x="30" y="12" width="4" height="40" rx="2"/>
+    <rect x="38" y="22" width="4" height="20" rx="2"/>
+    <rect x="46" y="28" width="4" height="8" rx="2" opacity="0.85"/>
+  </g>
+</svg>
